@@ -34,7 +34,7 @@ while cap.isOpened():
 
     plt.imshow(output)
     cv2.imshow('CV2frame', frame)
-    # plt.pause(0.0001)
+    plt.pause(0.0001)
     # give cv2 time to update frame
     if cv2.waitKey(10) & 0xFF == ord('q'):
         cap.release()

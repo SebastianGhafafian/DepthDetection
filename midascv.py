@@ -15,8 +15,31 @@ transform = transforms.small_transform
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, frame = cap.read()
+
+    #Transform input from midas
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    input_batch = transform(img).to('cpu')
+
+    # Perform inference
+    with torch.no_grad():
+        prediction = midas(input_batch)
+        prediction = torch.nn.functional.interpolate(
+            prediction.unsqueeze(1),
+            size=img.shape[:2],
+            mode="bicubic",
+            align_corners=False,
+        ).squeeze()
+        output = prediction.cpu().numpy()
+        # print(output)
+
+    plt.imshow(output)
     cv2.imshow('CV2frame', frame)
+    # plt.pause(0.0001)
     # give cv2 time to update frame
     if cv2.waitKey(10) & 0xFF == ord('q'):
         cap.release()
         cv2.destroyAllWindows() 
+
+plt.show()
+
+        
